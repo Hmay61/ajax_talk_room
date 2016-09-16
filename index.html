@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<link rel="stylesheet" style="text/css" href="./index.css">
+		<link href="https://fonts.googleapis.com/css?family=David+Libre|Nunito" rel="stylesheet">
+		<script type="text/javascript">
+			//通过ajax无刷新方式获得最新的聊天内容
+			var maxID = 0;
+			function showMessage(){
+				var xhr = new XMLHttpRequest();
+				xhr.onreadystatechange = function(){
+					if(xhr.readyState==4){
+						//alert(xhr.responseText);   //获得是一个字符串
+
+						//string-->实体内容
+						eval("var json_info=" + xhr.responseText);  
+
+						//遍历json_info的数组，把内容的信息与页面的内容做结合
+						//<p style="green">yue&nbsp;to&nbsp;fan&nbsp;smile&nbsp;said:Hi!(16:23:00)</p>
+						var s = "";
+						for(var i=0;i<json_info.length;i++){
+							s += "<p style='color:"+json_info[i].color+"'>";  //因为json_info这个数组里面的每一个都是json对象，所以可以用.来调用
+							s += json_info[i].sender+"&nbsp;to&nbsp;"+json_info[i].receiver+"&nbsp;";
+							s += json_info[i].expression + "&nbsp;said: ";
+							s += json_info[i].msg + "("+json_info[i].add_time+")</p>";
+
+							//把已经获得记录的最大id值赋予给maxID
+							maxID = json_info[i].id;
+						}
+						var showmsg = document.getElementById('show_msg');
+						showmsg.innerHTML += s;
+						//设置滚动条卷起高度,始终让滚动条出现在最下面
+						//卷起高度等于div本身高度
+						showmsg.scrollTop = showmsg.scrollHeight;
+					}
+				}
+				xhr.open('get','./data.php?maxID='+maxID);
+				xhr.send(null);
+			}
+
+			window.onload = function(){
+				//showMessage();  //获得最新聊天记录，
+				//制作轮循
+				setInterval("showMessage()",2000); 
+			}
+		</script>
+	</head>
+
+	<body>
+		<h2>Using Ajax To Create Simple Talk Room</h2>
+		<div id="main">
+			<div id="content">
+				<h3>Content</h3>
+				<hr>
+				<div id="show_msg">
+					<p style="green">yue&nbsp;to&nbsp;fan&nbsp;smile&nbsp;said:Hi!(16:23:00)</p>
+				</div>
+
+			</div>
+
+			<div id="message">
+				<form>
+				<div id="btn">
+					<div id="control">
+						Color:
+						<select name="color">
+							<option value="">Please choose</option>
+							<option style="color:blue" value="blue">blue</option>
+							<option style="color:green;" value="green">green</option>
+							<option style="color:pink" value="pink">pink</option>
+						</select>
+					</div>
+
+					<div id="expression">
+						Feeling:
+						<select name="feeling">
+							<option value="">Please choose</option>
+							<option value="smile">smile</option>
+							<option value="angry">angry</option>
+							<option value="upset">upset</option>
+
+						</select>
+					</div>
+
+					<div id="who">
+						To who:
+						<select name="who">
+							<option value="">Please choose</option>	
+							<option value="Yue">Yue</option>
+							<option value="Fan">Fan</option>
+							<option value="Xin">Xin</option>
+						</select>
+					</div>
+				</div>
+
+				<br><br>
+				<textarea id="msg" name="msg"></textarea>
+				<input type="button" value="submit" onclick="sendMsg()" id="sendbutton"><span id="sendResult"></span>
+				</form>
+			</div>
+		</div>	 	
+	</body>
+</html>
+
+<script type="text/javascript">
+	function sendMsg(){
+		var fm = document.getElementsByTagName('form')[0];
+		var fd = new FormData(fm); //收集数据
+		var xhr = new XMLHttpRequest();
+		xhr.onreadystatechange = function(){
+			if(xhr.readyState==4){
+				//alert(xhr.responseText);	
+				document.getElementById('sendResult').innerHTML = xhr.responseText;
+				//发送成功后，表单域信息清空
+				document.getElementsByTagName('select')[0].value=""; //color
+				document.getElementsByTagName('select')[1].value=""; //feeling
+				document.getElementsByTagName('select')[2].value=""; //to who
+				document.getElementById('msg').value="";
+				//3秒后，使得发表留言的信息消失
+				setTimeout('hideresult()',3000);
+			}
+		}
+		xhr.open('post','./send.php');
+		xhr.send(fd);
+	}
+
+	//使得发表留言的标志也消失
+	function hideresult(){
+		document.getElementById('sendResult').innerHTML = "";
+	}
+</script>

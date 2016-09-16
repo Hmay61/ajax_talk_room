@@ -1,0 +1,62 @@
+h2{
+	text-align: center;
+	color:#FE9A2E;
+	font-family: 'Nunito', sans-serif;
+}
+
+#show_msg{
+	height: 320px;
+	overflow: auto;
+}
+
+#content{
+	width:600px;
+	height: 400px;
+	border:2px solid white;
+	border-radius: 20px;
+	margin:auto;
+	background-color: #CED8F6;
+	font-family: 'David Libre', serif;
+	font-size: 15px;
+}
+#content h3{
+	text-align: center;
+	color:white;
+}
+
+#message{
+	width:600px;
+	height: 120px;
+	border:2px solid white;
+	border-radius: 10px;
+	margin:auto;
+	background-color: #A9E2F3;
+}
+
+#control,#expression,#who{
+	float:left;
+	width:33%;
+	color:white;
+}
+
+#control option{
+	color:#FE9A2E;
+}
+
+#msg{
+	display: block;
+	width:500px;
+	height: 40px;
+	margin:auto;
+}
+#sendbutton{
+	margin-left: 420px;
+}
+#sendResult{
+	color:green;
+}
+#btn{
+	margin-right:20px;
+}
+
+
